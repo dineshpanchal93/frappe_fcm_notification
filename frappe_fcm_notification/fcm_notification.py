@@ -77,7 +77,7 @@ def send_fcm_notification(device_token, title, body):
     """
     access_token = get_cached_access_token()
     headers = {
-        'Authorization': f'Bearer {access_token.access_token}',
+        'Authorization': f'Bearer {access_token["access_token"]}',
         'Content-Type': 'application/json; UTF-8',
     }
     payload = {
