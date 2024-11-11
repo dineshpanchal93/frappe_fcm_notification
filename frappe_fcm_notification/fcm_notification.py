@@ -4,6 +4,7 @@ import frappe
 from google.oauth2 import service_account
 from frappe.utils import now, add_to_date
 
+@frappe.whitelist()
 def get_fcm_credentials():
     """
     Retrieves FCM credentials from FCM Notification Settings DocType.
@@ -24,6 +25,7 @@ def get_fcm_credentials():
     }
     return service_account_info
 
+@frappe.whitelist()
 def get_cached_access_token():
     """
     Retrieves the cached access token if valid, otherwise generates a new one.
