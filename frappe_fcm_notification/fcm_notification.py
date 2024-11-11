@@ -12,16 +12,15 @@ def get_fcm_credentials():
     credentials_doc = frappe.get_single("FCM Notification Settings")
     service_account_info = {
         "type": "service_account",
-        "project_id": credentials_doc.project_id,
-        "private_key_id": credentials_doc.private_key_id,
-        "private_key": credentials_doc.private_key,
-        "client_email": credentials_doc.client_email,
-        "token_uri": credentials_doc.token_uri,
-        "client_id": credentials_doc.client_id,
-        "auth_uri": credentials_doc.auth_uri,
-        "auth_provider_x509_cert_url": credentials_doc.auth_provider_x509_cert_url,
-        "client_x509_cert_url": credentials_doc.client_x509_cert_url,
-        "universe_domain": credentials_doc.universe_domain
+        "project_id": credentials_doc.get("project_id"),
+        "private_key_id": credentials_doc.get("private_key_id"),
+        "private_key": credentials_doc.get_password("private_key").replace("\\n", "\n").strip(),
+        "client_email": credentials_doc.get("client_email"),
+        "client_id": credentials_doc.get("client_id"),
+        "auth_uri": credentials_doc.get("auth_uri"),
+        "token_uri": credentials_doc.get("token_uri"),
+        "auth_provider_x509_cert_url": credentials_doc.get("auth_provider_x509_cert_url"),
+        "client_x509_cert_url": credentials_doc.get("client_x509_cert_url")
     }
     return service_account_info
 
