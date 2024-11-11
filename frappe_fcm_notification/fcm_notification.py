@@ -2,6 +2,7 @@ import json
 import requests
 import frappe
 from google.oauth2 import service_account
+from google.auth.transport import requests
 from frappe.utils import now, add_to_date
 
 @frappe.whitelist()
@@ -29,32 +30,45 @@ def get_cached_access_token():
     """
     Retrieves the cached access token if valid, otherwise generates a new one.
     """
-    # Fetch the FCM Notification Settings DocType
-    credentials_doc = frappe.get_single("FCM Notification Settings")
+    try:
+        # Fetch the FCM Notification Settings DocType
+        credentials_doc = frappe.get_single("FCM Notification Settings")
+        
+        # Check if there is a valid access token
+        if credentials_doc.access_token and credentials_doc.expiration_time > now():
+            return {"access_token": credentials_doc.access_token}  # Return cached token as JSON
+
+        # Generate a new access token if expired or missing
+        service_account_info = get_fcm_credentials()
+        credentials = service_account.Credentials.from_service_account_info(
+            service_account_info,
+            scopes=["https://www.googleapis.com/auth/firebase.messaging"]
+        )
+
+        # Explicitly refresh the credentials to obtain a new token
+        request = requests.Request()
+        credentials.refresh(request)
+        
+        # Log for debugging purposes
+        frappe.log_error(f"Refreshed Credentials: {credentials}", "FCM Credentials Object")
+        frappe.log_error(f"Generated Token: {credentials.token}", "FCM Token")
+
+        access_token = credentials.token
+        expiration_time = add_to_date(now(), minutes=55)  # Set expiration about an hour from now
+
+        # Update the FCM Notification Settings DocType with new token and expiration time
+        credentials_doc.access_token = access_token
+        credentials_doc.expiration_time = expiration_time
+        credentials_doc.save()
+        frappe.db.commit()
+
+        # Return the new token in JSON format
+        return {"access_token": access_token}
     
-    # Check if there is a valid access token
-    if credentials_doc.access_token and credentials_doc.expiration_time > now():
-        return credentials_doc.access_token
-
-    # Generate a new access token if expired or missing
-    service_account_info = get_fcm_credentials()
-    credentials = service_account.Credentials.from_service_account_info(
-        service_account_info,
-        scopes=["https://www.googleapis.com/auth/firebase.messaging"]
-    )
-
-    frappe.log_error(frappe.get_traceback(), f"007 {credentials}")
-    frappe.log_error( f"008 {credentials.token}","FCM Token")
-    access_token = credentials.token
-    expiration_time = add_to_date(now(), minutes=55)  # Set expiration about an hour from now
-
-    # Update the FCM Notification Settings DocType with new token and expiration time
-    credentials_doc.access_token = access_token
-    credentials_doc.expiration_time = expiration_time
-    credentials_doc.save()
-    frappe.db.commit()
-
-    return {"access_token": access_token}
+    except Exception as e:
+        # Log any error that occurs and return a message
+        frappe.log_error(f"Error in get_cached_access_token: {str(e)}")
+        return {"error": str(e)}
 
 @frappe.whitelist()
 def send_fcm_notification(device_token, title, body):
