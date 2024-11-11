@@ -51,7 +51,7 @@ def get_cached_access_token():
         access_token = credentials.token
         expiration_time = add_to_date(now(), minutes=55)
 
-        credentials_doc.access_token = access_token
+        credentials_doc.get_password("access_token") = access_token
         credentials_doc.expiration_time = expiration_time
         credentials_doc.save()
         frappe.db.commit()
