@@ -51,7 +51,7 @@ def get_cached_access_token():
         
         # Log for debugging purposes
         frappe.log_error(f"Refreshed Credentials: {credentials}", "FCM Credentials Object")
-        frappe.log_error(f"Generated Token: {credentials.token}", "FCM Token")
+        # frappe.log_error(f"Generated Token: {credentials.token}", "FCM Token")
 
         access_token = credentials.token
         expiration_time = add_to_date(now(), minutes=55)  # Set expiration about an hour from now
