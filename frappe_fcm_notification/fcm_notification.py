@@ -42,6 +42,9 @@ def get_cached_access_token():
         service_account_info,
         scopes=["https://www.googleapis.com/auth/firebase.messaging"]
     )
+
+    frappe.log_error(frappe.get_traceback(), f"007 {credentials}")
+    frappe.log_error( f"008 {credentials.token}","FCM Token")
     access_token = credentials.token
     expiration_time = add_to_date(now(), minutes=55)  # Set expiration about an hour from now
 
@@ -51,7 +54,7 @@ def get_cached_access_token():
     credentials_doc.save()
     frappe.db.commit()
 
-    return access_token
+    return {"access_token": access_token}
 
 @frappe.whitelist()
 def send_fcm_notification(device_token, title, body):
