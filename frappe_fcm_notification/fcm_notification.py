@@ -67,7 +67,7 @@ def get_cached_access_token():
         return {"error": str(e)}
 
 @frappe.whitelist()
-def send_fcm_notification(device_token, title, body):
+def send_fcm_notification(title, body): #Add device token
     """
     Sends a push notification using the cached access token.
     """
@@ -76,9 +76,24 @@ def send_fcm_notification(device_token, title, body):
         'Authorization': f'Bearer {access_token["access_token"]}',
         'Content-Type': 'application/json; UTF-8',
     }
+    # payload = {
+    #     "message": {
+    #         "token": device_token,
+    #         "notification": {
+    #             "title": title,
+    #             "body": body
+    #         },
+    #         "data": {
+    #             "click_action": "FLUTTER_NOTIFICATION_CLICK",
+    #             "title": title,
+    #             "body": body
+    #         }
+    #     }
+    # }
+
     payload = {
         "message": {
-            "token": device_token,
+            "topic": "test-topic",  # Specify the test topic here
             "notification": {
                 "title": title,
                 "body": body
