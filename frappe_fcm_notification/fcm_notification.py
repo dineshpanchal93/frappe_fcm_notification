@@ -34,13 +34,15 @@ def get_cached_access_token():
         credentials_doc = frappe.get_single("FCM Notification Settings")
         
         if credentials_doc.access_token and credentials_doc.expiration_time > now():
-            return {"access_token": credentials_doc.access_token}
+            return {"access_token": credentials_doc.get_password["access_token"]}
 
         service_account_info = get_fcm_credentials()
         credentials = service_account.Credentials.from_service_account_info(
             service_account_info,
             scopes=["https://www.googleapis.com/auth/firebase.messaging"]
         )
+
+        frappe.log_error(f"Credentials: {credentials}", "FCM Credentials Object")
 
         request = requests.Request()
         credentials.refresh(request)
@@ -51,10 +53,12 @@ def get_cached_access_token():
         access_token = credentials.token
         expiration_time = add_to_date(now(), minutes=55)
 
-        credentials_doc.get_password("access_token") = access_token
+        credentials_doc.access_token = access_token
         credentials_doc.expiration_time = expiration_time
         credentials_doc.save()
         frappe.db.commit()
+
+        frappe.log_error(f"Generated and Returning New Token (truncated): {access_token[:50]}...", "FCM Token Debug")
 
         return {"access_token": access_token}
     
