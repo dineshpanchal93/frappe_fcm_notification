@@ -44,7 +44,7 @@ def get_cached_access_token():
 
         frappe.log_error(f"Credentials: {credentials}", "FCM Credentials Object")
 
-        request = requests.Request()
+        request = google_requests()
         credentials.refresh(request)
         
         # Log for debugging purposes
