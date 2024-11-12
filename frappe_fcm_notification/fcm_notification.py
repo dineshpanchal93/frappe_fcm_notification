@@ -34,7 +34,7 @@ def get_cached_access_token():
         credentials_doc = frappe.get_single("FCM Notification Settings")
         
         if credentials_doc.access_token and credentials_doc.expiration_time > now():
-            return {"access_token": credentials_doc.get_password["access_token"]}
+            return {"access_token": credentials_doc.get_password("access_token")}
 
         service_account_info = get_fcm_credentials()
         credentials = service_account.Credentials.from_service_account_info(
