@@ -76,100 +76,17 @@ Follow these steps to configure FCM Notification Settings in your Frappe/ERPNext
 ## Usage
 
 ### Sending a Notification
+1. Link your device id to each user using the User Device DocType.
+2. Create a notification in Frappe/ERPNext (https://docs.erpnext.com/docs/user/manual/en/notifications)
+3. Run an event that triggers any notification. The notifcation will be send the respetive user via FCM if they have subscribed to it.
+4. Optionally you can use whitelisted method `api/method/frappe_fcm_notification.fcm_notification.notification_queue` to test in postman.
 
-Once the settings are configured, you can send notifications through the following API endpoints:
-
-
-
-1. **Send FCM Notification**
-
-   Endpoint: `/api/method/frappe_fcm_notification.fcm_notification.notification_queue`
-
-   **Parameters**:
-   - `device_token`: The device token of the recipient.
-   - `title`: The title of the notification.
-   - `body`: The body text of the notification.
-
-   **Example**:
-
-   ```json
-   {
-       "device_token": "device_token_value",
-       "title": "Hello",
-       "body": "This is a test notification."
-   }
-   ```
-
-   **Response**:
-
-   ```json
-   {
-       "status": "success",
-       "response": {
-           "name": "projects/your-project-id/messages/message-id"
-       }
-   }
-   ```
 
 ### Logging and Error Handling
 
 - Errors are logged in **Error Logs** in Frappe, allowing you to view and debug any issues that occur during notification sending.
 - You can limit the length of logged access tokens to prevent security issues (e.g., only logging the first 50 characters).
 
-### Example Code Snippets
-
-#### Fetching FCM Credentials
-
-```python
-@frappe.whitelist()
-def get_fcm_credentials():
-    credentials_doc = frappe.get_single("FCM Notification Settings")
-    return {
-        "type": "service_account",
-        "project_id": credentials_doc.get("project_id"),
-        "private_key_id": credentials_doc.get("private_key_id"),
-        "private_key": credentials_doc.get_password("private_key").replace("\\n", "\n"),
-        "client_email": credentials_doc.get("client_email"),
-        "client_id": credentials_doc.get("client_id"),
-        "auth_uri": credentials_doc.get("auth_uri"),
-        "token_uri": credentials_doc.get("token_uri"),
-        "auth_provider_x509_cert_url": credentials_doc.get("auth_provider_x509_cert_url"),
-        "client_x509_cert_url": credentials_doc.get("client_x509_cert_url")
-    }
-```
-
-#### Sending a Notification
-
-```python
-@frappe.whitelist()
-def send_fcm_notification(device_token, title, body):
-    access_token = get_cached_access_token()["access_token"]
-    headers = {
-        "Authorization": f"Bearer {access_token}",
-        "Content-Type": "application/json; UTF-8",
-    }
-    payload = {
-        "message": {
-            "token": device_token,
-            "notification": {
-                "title": title,
-                "body": body
-            },
-            "data": {
-                "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                "title": title,
-                "body": body
-            }
-        }
-    }
-    fcm_endpoint = f'https://fcm.googleapis.com/v1/projects/{get_fcm_credentials()["project_id"]}/messages:send'
-    response = requests.post(fcm_endpoint, headers=headers, json=payload)
-    if response.status_code == 200:
-        return {"status": "success", "response": response.json()}
-    else:
-        frappe.log_error(response.text, "FCM Notification Error")
-        return {"status": "failed", "error": response.text}
-```
 
 ---
 
