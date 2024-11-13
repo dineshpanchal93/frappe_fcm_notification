@@ -1,7 +1,7 @@
 
 ---
 
-# FCM Notification for Frappe
+# FCM Notification for Frappe using latest HTTP v1 API
 
 This repository provides integration with Firebase Cloud Messaging (FCM) for sending push notifications from a Frappe/ERPNext instance. The app uses FCM's REST API to send notifications to client devices, leveraging Firebase service account credentials.
 
