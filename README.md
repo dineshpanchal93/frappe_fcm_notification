@@ -13,6 +13,11 @@ This repository provides integration with Firebase Cloud Messaging (FCM) for sen
 
 ---
 
+## Important Note
+For testing purposes, the code is currently configured to send notifications via FCM topics instead of device tokens. The device token-based notification payload is commented out in the send_fcm_notification function to allow easier testing with a topic-based approach. If you wish to switch back to device-specific notifications, uncomment the device_token code block and adjust the payload accordingly.
+
+---
+
 ## Installation
 
 ### Prerequisites
