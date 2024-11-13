@@ -1,9 +1,40 @@
 import json
 import requests
 import frappe
+from frappe import enqueue
 from google.oauth2 import service_account
 from google.auth.transport import requests as google_requests
 from frappe.utils import now, add_to_date
+
+
+def user_id(doc):
+    user_email = doc.for_user
+    user_device_id = frappe.get_all(
+        "User Device", filters={"user": user_email}, fields=["device_token"]
+    )
+    return user_device_id
+
+@frappe.whitelist()
+
+def notification_queue(doc,method):
+    # device_token = user_id(doc)
+    # if device_token:
+    #     for device in device_token:
+    #         enqueue(
+    #             send_fcm_notification,
+    #             queue="default",
+    #             now=False,
+    #             device_token=device,
+    #             notification=doc
+    #         )
+
+    enqueue(
+        send_fcm_notification,
+        queue="default",
+        now=False,
+        notification=doc
+    )
+
 
 @frappe.whitelist()
 def get_fcm_credentials():
@@ -67,10 +98,14 @@ def get_cached_access_token():
         return {"error": str(e)}
 
 @frappe.whitelist()
-def send_fcm_notification(title, body): #Add device token
+def send_fcm_notification(notification): #Add device token #add doc method here when implementin notification log with device token
     """
     Sends a push notification using the cached access token.
+
     """
+    body = notification.email_content
+    title = notification.subject
+
     access_token = get_cached_access_token()
     headers = {
         'Authorization': f'Bearer {access_token["access_token"]}',

@@ -130,6 +130,12 @@ app_license = "mit"
 # 	}
 # }
 
+doc_events = {
+    "Notification Log": {
+        "after_insert": "frappe_fcm_notification.fcm_notification.notification_queue"
+    }
+}
+
 # Scheduled Tasks
 # ---------------
 
