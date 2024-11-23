@@ -27,13 +27,14 @@
   {
    "fieldname": "device_token",
    "fieldtype": "Data",
-   "label": "Device Token"
+   "label": "Device Token",
+   "unique": 1
   },
   {
    "fieldname": "device_type",
    "fieldtype": "Select",
    "label": "Device Type",
-   "options": "\niOS\nAndroid\nWeb"
+   "options": "\nios\nandroid\nweb"
   },
   {
    "default": "0",
@@ -44,7 +45,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-11 10:10:30.522243",
+ "modified": "2024-11-23 16:37:28.925461",
  "modified_by": "Administrator",
  "module": "Frappe Fcm Notification",
  "name": "User Device",
