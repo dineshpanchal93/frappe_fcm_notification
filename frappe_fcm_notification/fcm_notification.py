@@ -17,23 +17,23 @@ def user_id(doc):
 @frappe.whitelist()
 
 def notification_queue(doc,method):
-    # device_token = user_id(doc)
-    # if device_token:
-    #     for device in device_token:
-    #         enqueue(
-    #             send_fcm_notification,
-    #             queue="default",
-    #             now=False,
-    #             device_token=device,
-    #             notification=doc
-    #         )
+    device_token = user_id(doc)
+    if device_token:
+        for device in device_token:
+            enqueue(
+                send_fcm_notification,
+                queue="default",
+                now=False,
+                device_token=device,
+                notification=doc
+            )
 
-    enqueue(
-        send_fcm_notification,
-        queue="default",
-        now=False,
-        notification=doc
-    )
+    # enqueue(
+    #     send_fcm_notification,
+    #     queue="default",
+    #     now=False,
+    #     notification=doc
+    # )
 
 
 @frappe.whitelist()
@@ -98,7 +98,7 @@ def get_cached_access_token():
         return {"error": str(e)}
 
 @frappe.whitelist()
-def send_fcm_notification(notification): #Add device token #add doc method here when implementin notification log with device token
+def send_fcm_notification(notification,device_token): #Add device token #add doc method here when implementin notification log with device token
     """
     Sends a push notification using the cached access token.
 
@@ -111,9 +111,23 @@ def send_fcm_notification(notification): #Add device token #add doc method here 
         'Authorization': f'Bearer {access_token["access_token"]}',
         'Content-Type': 'application/json; UTF-8',
     }
+    payload = {
+        "message": {
+            "token": device_token,
+            "notification": {
+                "title": title,
+                "body": body
+            },
+            "data": {
+                "doctype": notification.document_type,
+                "docname": notification.document_name,
+            }
+        }
+    }
+
     # payload = {
     #     "message": {
-    #         "token": device_token,
+    #         "topic": "test-topic",  # Specify the test topic here
     #         "notification": {
     #             "title": title,
     #             "body": body
@@ -125,21 +139,6 @@ def send_fcm_notification(notification): #Add device token #add doc method here 
     #         }
     #     }
     # }
-
-    payload = {
-        "message": {
-            "topic": "test-topic",  # Specify the test topic here
-            "notification": {
-                "title": title,
-                "body": body
-            },
-            "data": {
-                "click_action": "FLUTTER_NOTIFICATION_CLICK",
-                "title": title,
-                "body": body
-            }
-        }
-    }
 
     fcm_endpoint = f'https://fcm.googleapis.com/v1/projects/{get_fcm_credentials()["project_id"]}/messages:send'
     response = requests.post(fcm_endpoint, headers=headers, json=payload)
