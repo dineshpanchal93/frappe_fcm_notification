@@ -103,6 +103,8 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
     Sends a push notification using the cached access token.
 
     """
+
+    frappe.log_error("Notification:", notification)
     body = notification.email_content
     title = notification.subject
 
@@ -112,16 +114,14 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
         'Content-Type': 'application/json; UTF-8',
     }
     payload = {
-        "message": {
-            "token": device_token,
-            "notification": {
-                "title": title,
-                "body": body
-            },
-            "data": {
-                "doctype": notification.document_type,
-                "docname": notification.document_name,
-            }
+        "token": device_token,
+        "notification": {
+            "title": title,
+            "body": body,
+        },
+        "data": {
+            "doctype": notification.document_type,
+            "docname": notification.document_name,
         }
     }
 
