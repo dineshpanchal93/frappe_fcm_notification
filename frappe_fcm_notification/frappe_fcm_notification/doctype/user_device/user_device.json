@@ -26,9 +26,8 @@
   },
   {
    "fieldname": "device_token",
-   "fieldtype": "Data",
-   "label": "Device Token",
-   "unique": 1
+   "fieldtype": "Long Text",
+   "label": "Device Token"
   },
   {
    "fieldname": "device_type",
@@ -45,7 +44,7 @@
  ],
  "index_web_pages_for_search": 1,
  "links": [],
- "modified": "2024-11-23 16:37:28.925461",
+ "modified": "2024-11-23 17:16:28.426105",
  "modified_by": "Administrator",
  "module": "Frappe Fcm Notification",
  "name": "User Device",
