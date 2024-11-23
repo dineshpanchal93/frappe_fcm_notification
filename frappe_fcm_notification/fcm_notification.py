@@ -147,6 +147,7 @@ def send_fcm_notification(notification): #Add device token #add doc method here 
     if response.status_code == 200:
         frappe.log_error("Notification sent successfully:", response.json())
         return {"status": "success", "response": response.json()}
+    
     else:
         error_message = f"Failed to send notification: {response.text}"
         frappe.log_error(error_message, "FCM Notification Error")
