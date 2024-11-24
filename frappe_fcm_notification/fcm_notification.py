@@ -105,9 +105,11 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
     """
 
     frappe.log_error("Notification:", notification)
+    frappe.log_error(f"Device Token: {device_token[:50]}", "FCM Debugging")
     body = notification.email_content
     title = notification.subject
-
+    if isinstance(device_token, dict):
+        device_token = device_token.get('device_token')
     access_token = get_cached_access_token()
     headers = {
         'Authorization': f'Bearer {access_token["access_token"]}',
@@ -126,6 +128,9 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
             }
         }
     }
+
+    frappe.log_error(f"Payload sent: {json.dumps(payload, indent=2)}", "FCM Debugging")
+
 
     # payload = {
     #     "message": {
