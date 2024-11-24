@@ -105,7 +105,7 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
     """
 
     frappe.log_error("Notification:", notification)
-    frappe.log_error(f"Device Token: {device_token[:50]}", "FCM Debugging")
+    # frappe.log_error(f"Device Token: {device_token[:50]}", "FCM Debugging")
     body = notification.email_content
     title = notification.subject
     if isinstance(device_token, dict):
