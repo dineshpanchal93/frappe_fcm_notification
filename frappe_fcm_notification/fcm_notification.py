@@ -5,6 +5,12 @@ from frappe import enqueue
 from google.oauth2 import service_account
 from google.auth.transport import requests as google_requests
 from frappe.utils import now, add_to_date
+import re
+
+def cleanhtml(raw_html):
+    cleanr = re.compile('<.*?>')
+    cleantext = re.sub(cleanr, '', raw_html)
+    return cleantext
 
 
 def user_id(doc):
@@ -18,6 +24,7 @@ def user_id(doc):
 
 def notification_queue(doc,method):
     device_token = user_id(doc)
+    frappe.log_error(f"Device Token: {device_token}", "FCM Debugging")
     if device_token:
         for device in device_token:
             enqueue(
@@ -108,6 +115,10 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
     # frappe.log_error(f"Device Token: {device_token[:50]}", "FCM Debugging")
     body = notification.email_content
     title = notification.subject
+
+    body = cleanhtml(body)
+    title = cleanhtml(title)
+
     if isinstance(device_token, dict):
         device_token = device_token.get('device_token')
     access_token = get_cached_access_token()
