@@ -135,7 +135,7 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
             },
             "data": {
                 "doctype": notification.document_type,
-                "docname": notification.document_name,
+                "docname": str(notification.document_name),
             }
         }
     }
