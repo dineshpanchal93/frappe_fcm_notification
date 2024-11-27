@@ -24,7 +24,7 @@ def user_id(doc):
 
 def notification_queue(doc,method):
     device_token = user_id(doc)
-    frappe.log_error(f"Device Token: {device_token}", "FCM Debugging")
+    # frappe.log_error(f"Device Token: {device_token}", "FCM Debugging")
     if device_token:
         for device in device_token:
             enqueue(
