@@ -96,7 +96,6 @@ def get_cached_access_token():
         credentials_doc.save()
         frappe.db.commit()
 
-        frappe.log_error(f"Generated and Returning New Token (truncated): {access_token[:50]}...", "FCM Token Debug")
 
         return {"access_token": access_token}
     
