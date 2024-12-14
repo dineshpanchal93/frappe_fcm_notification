@@ -14,6 +14,7 @@ class UserDevice(Document):
 
 		if self.device_type == "ios":
 			self.device_token = get_ios_device_token(self.device_token)
+			frappe.log_error(f"Device Token: {self.device_token}","Device Token")
 			self.save()
 
 @frappe.whitelist(allow_guest=True)
@@ -29,7 +30,7 @@ def get_ios_device_token(device_token):
 	payload = json.dumps({
 		"application": "com.upscape.crm",
 		"sandbox":False,
-		"apns_tokens":device_token
+		"apns_tokens":[device_token]
 	})
 
 	headers = {
@@ -45,6 +46,6 @@ def get_ios_device_token(device_token):
 	
 
 	if response.status_code == 200:
-		return response.json()
+		return response.text
 
 
