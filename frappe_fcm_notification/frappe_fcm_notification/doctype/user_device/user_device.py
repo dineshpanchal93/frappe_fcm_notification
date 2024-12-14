@@ -40,12 +40,20 @@ def get_ios_device_token(device_token):
 	}
 
 	response = requests.post(url, headers=headers, data=payload)
-	frappe.log_error(f"Response: {response.text}","Response")
-	frappe.log_error(f"Response2: {response}","Response")
+	response_data = response.json()
+	# frappe.log_error(f"Response: {response.text}","Response")
+	# frappe.log_error(f"Response2: {response}","Response")
 
 	
 
 	if response.status_code == 200:
-		return response.text
+		for result in response_data.get("results", []):
+			if result.get("status") == "OK":
+				return result.get("registration_token")
+			else:
+				frappe.log_error(f"Error processing token: {result}", "Token Error")
+	else:
+		frappe.log_error(f"FCM API Error: {response.text}", "FCM Error")
+
 
 
