@@ -14,6 +14,7 @@ class UserDevice(Document):
 
 		if self.device_type == "ios":
 			self.device_token = get_ios_device_token(self.device_token)
+			self.save()
 
 @frappe.whitelist(allow_guest=True)
 def get_ios_device_token(device_token):
@@ -38,7 +39,10 @@ def get_ios_device_token(device_token):
 	}
 
 	response = requests.post(url, headers=headers, data=payload)
-	print(response.json())
+	frappe.log_error(f"Response: {response.text}","Response")
+	frappe.log_error(f"Response2: {response}","Response")
+
+	
 
 	if response.status_code == 200:
 		return response.json()
