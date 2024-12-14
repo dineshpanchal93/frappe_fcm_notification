@@ -21,7 +21,7 @@ def get_ios_device_token(device_token):
 	print(device_token)
 	access_token = get_cached_access_token()
 	
-	frappe.log_error(f"access_token: {access_token}","Access")
+	# frappe.log_error(f"access_token: {access_token}","Access")
 
 	url = "https://iid.googleapis.com/iid/v1:batchImport"
 
