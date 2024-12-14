@@ -14,7 +14,7 @@ class UserDevice(Document):
 
 		if self.device_type == "ios":
 			self.device_token = get_ios_device_token(self.device_token)
-			frappe.log_error(f"Device Token: {self.device_token}","Device Token")
+			frappe.log_error(f"Device Token:","Device Token")
 			self.save()
 
 @frappe.whitelist(allow_guest=True)
@@ -51,7 +51,7 @@ def get_ios_device_token(device_token):
 			if result.get("status") == "OK":
 				return result.get("registration_token")
 			else:
-				frappe.log_error(f"Error processing token: {result}", "Token Error")
+				frappe.log_error(f"Error processing token:", "Token Error")
 	else:
 		frappe.log_error(f"FCM API Error: {response.text}", "FCM Error")
 
