@@ -128,10 +128,11 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
     payload = {
         "message": {
             "token": device_token,
-            "sound":"cash_notification.wav",
+            
             "notification": {
                 "title": title,
                 "body": body,
+                "sound":"cash_notification.wav"
             },
             "data": {
                 "doctype": notification.document_type,
