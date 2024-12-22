@@ -127,10 +127,11 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
     }
     payload = {
         "message": {
-            "token": device_token,  # Device token for the target device
+            "token": device_token,
+            "sound":"cash_notification.wav",
             "notification": {
-                "title": title,  # Notification title
-                "body": body     # Notification body
+                "title": title,
+                "body": body,
             },
             "data": {
                 "doctype": notification.document_type,
@@ -141,21 +142,6 @@ def send_fcm_notification(notification,device_token): #Add device token #add doc
 
     frappe.log_error(f"Payload sent: {json.dumps(payload, indent=2)}", "FCM Debugging")
 
-
-    # payload = {
-    #     "message": {
-    #         "topic": "test-topic",  # Specify the test topic here
-    #         "notification": {
-    #             "title": title,
-    #             "body": body
-    #         },
-    #         "data": {
-    #             "click_action": "FLUTTER_NOTIFICATION_CLICK",
-    #             "title": title,
-    #             "body": body
-    #         }
-    #     }
-    # }
 
     fcm_endpoint = f'https://fcm.googleapis.com/v1/projects/{get_fcm_credentials()["project_id"]}/messages:send'
     response = requests.post(fcm_endpoint, headers=headers, json=payload)
